@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Museum Poster Files</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Pachang&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #662d91;
+        --accent-warm: #f27916;
+        --accent-pink: #ea1c7a;
+        --bg: #f9f7f9;
+        --text: #000000;
+        --panel: #ffffff;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+      }
+      [data-theme='dark'] {
+        --bg: #000000;
+        --text: #f9f7f9;
+        --panel: #050509;
+        --muted: #c4c7cf;
+        --border: #2d2d38;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          'Manrope',
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'SF Pro Text',
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        border-bottom: 1px solid transparent;
+        background: var(--primary);
+        color: #fff;
+      }
+      .nav-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 24px;
+      }
+      .nav-title {
+        margin: 0;
+        font-family:
+          'Pachang',
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'SF Pro Text',
+          sans-serif;
+        font-size: clamp(1rem, 2vw, 1.4rem);
+        letter-spacing: 0.02em;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 24px 40px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-family:
+          'Pachang',
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'SF Pro Text',
+          sans-serif;
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      a.button {
+        display: inline-block;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        text-decoration: none;
+        color: var(--text);
+        background: var(--panel);
+        transition: transform 0.2s ease;
+      }
+      a.button:hover {
+        transform: translateY(-1px);
+      }
+      .grid {
+        display: grid;
+        gap: 20px;
+      }
+      @media (min-width: 960px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+      }
+      h2 {
+        margin: 0 0 10px;
+      }
+      object {
+        width: 100%;
+        height: 70vh;
+        border: 0;
+        border-radius: 10px;
+        background: #fff;
+      }
+      p.small {
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .theme-toggle {
+        position: fixed;
+        left: 16px;
+        top: 64px;
+        z-index: 60;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: color-mix(in srgb, var(--panel) 85%, transparent);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 14px;
+      }
+      [data-theme='dark'] .theme-toggle {
+        background: rgba(0, 0, 0, 0.7);
+      }
+    </style>
+  </head>
+  <body>
+    <button
+      id="theme-toggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Toggle light and dark mode"
+    >
+      ☼
+    </button>
+    <nav>
+      <div class="nav-inner">
+        <p class="nav-title">Issey Miyake Museum Poster</p>
+      </div>
+    </nav>
+    <main>
+      <h1>Issey Miyake Museum Poster Files</h1>
+      <p class="small">View both PDF versions below.</p>
+
+      <div class="actions">
+        <a class="button" href="/museum-poster-ipad.pdf" target="_blank" rel="noopener noreferrer">Open Apple iPad Retina PDF</a>
+        <a class="button" href="/museum-poster-screen.pdf" target="_blank" rel="noopener noreferrer">Open Screen Version PDF</a>
+      </div>
+
+      <section class="grid">
+        <div class="panel">
+          <h2>Apple iPad Retina</h2>
+          <object data="/museum-poster-ipad.pdf" type="application/pdf">
+            <a href="/museum-poster-ipad.pdf" target="_blank" rel="noopener noreferrer">Open PDF</a>
+          </object>
+        </div>
+
+        <div class="panel">
+          <h2>Screen Version</h2>
+          <object data="/museum-poster-screen.pdf" type="application/pdf">
+            <a href="/museum-poster-screen.pdf" target="_blank" rel="noopener noreferrer">Open PDF</a>
+          </object>
+        </div>
+      </section>
+    </main>
+    <script>
+      (function () {
+        var storageKey = 'theme';
+        var root = document.documentElement;
+        var button = document.getElementById('theme-toggle');
+
+        var savedTheme = localStorage.getItem(storageKey);
+        var prefersDark =
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = savedTheme === 'dark' || savedTheme === 'light'
+          ? savedTheme
+          : (prefersDark ? 'dark' : 'light');
+
+        function applyTheme(nextTheme) {
+          root.setAttribute('data-theme', nextTheme);
+          localStorage.setItem(storageKey, nextTheme);
+          if (button) {
+            button.textContent = nextTheme === 'dark' ? '☾' : '☼';
+            button.setAttribute(
+              'aria-label',
+              nextTheme === 'dark'
+                ? 'Switch to light mode'
+                : 'Switch to dark mode',
+            );
+          }
+        }
+
+        applyTheme(theme);
+
+        if (button) {
+          button.addEventListener('click', function () {
+            var current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
