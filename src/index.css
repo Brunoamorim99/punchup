@@ -47,11 +47,13 @@ h3 {
 
   --bg: #f9f7f9;
   --text: #000000;
+  --work-bg: linear-gradient(180deg, #2f1d58 0%, #1f2a47 100%);
 }
 
 [data-theme="dark"] {
   --bg: #000000;
   --text: #f9f7f9;
+  --work-bg: linear-gradient(180deg, #130f24 0%, #0b0f1d 100%);
 }
 
 .bg-surface {
@@ -98,6 +100,5 @@ h3 {
 
 .work-carousel {
   background: var(--work-bg, #111827);
-  transition: background-color 0.45s ease;
 }
 

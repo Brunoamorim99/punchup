@@ -4,8 +4,6 @@ import { useState } from 'react';
 
 const navItems = [
   { path: '/', label: 'Home' },
-  { path: '/portfolio', label: 'Portfolio' },
-  { path: '/about', label: 'About' },
   { path: '/contact', label: 'Contact' },
 ];
 
@@ -13,7 +11,12 @@ export function Navigation() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === '/contact') {
+      return location.pathname === '/contact' || location.pathname === '/about';
+    }
+    return location.pathname === path || location.pathname === '/portfolio';
+  };
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-[var(--primary)] text-white backdrop-blur dark:border-gray-800 dark:bg-black/80">

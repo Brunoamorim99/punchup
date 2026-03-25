@@ -1,7 +1,7 @@
-import { projects } from '../data/projects';
+import { carouselProjects } from '../data/carouselProjects';
 import { InertiaProjectCarousel } from '../components/InertiaProjectCarousel';
 
 export function PortfolioPage() {
-  return <InertiaProjectCarousel projects={projects} />;
+  return <InertiaProjectCarousel projects={carouselProjects} />;
 }
 

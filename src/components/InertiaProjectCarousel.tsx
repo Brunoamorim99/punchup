@@ -1,29 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ProcessHoverGallery } from './ProcessHoverGallery';
-import type { Project } from '../data/projects';
+import type { CarouselProject } from '../data/carouselProjects';
 
 type InertiaProjectCarouselProps = {
-  projects: Project[];
+  projects: CarouselProject[];
+  sectionId?: string;
 };
 
-function formatIndex(index: number) {
-  return `${index + 1}`.padStart(2, '0');
-}
-
-export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps) {
+export function InertiaProjectCarousel({
+  projects,
+  sectionId = 'portfolio',
+}: InertiaProjectCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Array<HTMLElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTouch, setIsTouch] = useState(false);
-
-  const bgColors = useMemo(
-    () => projects.map((project) => project.brandColor ?? '#111827'),
-    [projects],
-  );
 
   useEffect(() => {
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
@@ -36,8 +31,6 @@ export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps
 
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      gsap.set(containerRef.current, { '--work-bg': bgColors[0] });
-
       sectionRefs.current.forEach((section, index) => {
         if (!section) return;
         const imageLayer = section.querySelector<HTMLElement>('[data-speed="1"]');
@@ -83,26 +76,16 @@ export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps
           end: 'bottom 55%',
           onEnter: () => {
             setActiveIndex(index);
-            gsap.to(containerRef.current, {
-              '--work-bg': bgColors[index],
-              duration: 0.6,
-              ease: 'power2.out',
-            });
           },
           onEnterBack: () => {
             setActiveIndex(index);
-            gsap.to(containerRef.current, {
-              '--work-bg': bgColors[index],
-              duration: 0.6,
-              ease: 'power2.out',
-            });
           },
         });
       });
     }, containerRef);
 
     return () => ctx.revert();
-  }, [bgColors, isTouch, projects.length]);
+  }, [isTouch, projects.length]);
 
   const scrollToProject = (index: number) => {
     const target = sectionRefs.current[index];
@@ -112,9 +95,9 @@ export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps
 
   return (
     <div
+      id={sectionId}
       ref={containerRef}
       className="work-carousel relative"
-      style={{ ['--work-bg' as string]: bgColors[0] ?? '#111827' }}
     >
       <div className="mx-auto max-w-6xl px-6 pb-20 pt-24">
         <header className="mb-14 max-w-3xl">
@@ -133,7 +116,7 @@ export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps
         <div className="fixed right-6 top-1/2 z-40 -translate-y-1/2 space-y-3">
           {projects.map((project, index) => (
             <button
-              key={project.id}
+              key={`${project.id}-${project.title}`}
               type="button"
               onClick={() => scrollToProject(index)}
               className={`block text-sm tracking-[0.2em] transition ${
@@ -141,7 +124,7 @@ export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps
               }`}
               aria-label={`Jump to ${project.title}`}
             >
-              {formatIndex(index)}
+              {project.id}
             </button>
           ))}
         </div>
@@ -150,7 +133,7 @@ export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps
       <section className="space-y-0">
         {projects.map((project, index) => (
           <article
-            key={project.id}
+            key={`${project.id}-${project.title}`}
             ref={(node) => {
               sectionRefs.current[index] = node;
             }}
@@ -161,31 +144,19 @@ export function InertiaProjectCarousel({ projects }: InertiaProjectCarouselProps
             <div data-speed="1" className="aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/10">
               <ProcessHoverGallery
                 title={project.title}
-                heroImage={project.caseStudyHeroImage ?? project.image}
+                heroImage={project.heroImage}
                 processImages={project.processImages}
               />
             </div>
 
             <div data-speed="0.5" className="space-y-5 text-white">
-              <p className="text-sm uppercase tracking-[0.2em] text-white/60">
-                {project.category} • {project.year}
-              </p>
+              <p className="text-sm uppercase tracking-[0.2em] text-white/60">{project.id}</p>
               <h2 className="text-3xl font-semibold md:text-5xl">{project.title}</h2>
               <p className="max-w-xl text-base leading-relaxed text-white/78">
                 {project.description}
               </p>
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-white/20 px-4 py-1 text-xs font-medium text-white/85"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
               <Link
-                to={`/portfolio/${project.slug}`}
+                to={project.link}
                 className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-medium text-white transition hover:bg-white hover:text-black"
               >
                 View case study
