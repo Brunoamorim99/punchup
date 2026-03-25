@@ -132,7 +132,7 @@ export const projects: Project[] = [
       '/bandit-detail-05.png',
       '/bandit-detail-06.png',
       '',
-      '/bandit-detail-09.mov',
+      '',
     ],
     category: 'Interactive Game Design',
     year: '2024',
