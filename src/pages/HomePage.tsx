@@ -35,6 +35,8 @@ export function HomePage() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col justify-center px-6 pb-20">
       <section className="mx-auto w-full max-w-5xl pt-10">
+
+        {/* Big name */}
         <h1
           ref={nameRef}
           style={{ fontFamily: '"Pachang", sans-serif' }}
@@ -49,6 +51,7 @@ export function HomePage() {
           dos Santos
         </h1>
 
+        {/* Subtitle */}
         <p
           ref={subtitleRef}
           className="mt-6 max-w-xl text-lg leading-relaxed text-gray-500 dark:text-gray-400"
@@ -60,6 +63,7 @@ export function HomePage() {
           craft meaningful digital experiences.
         </p>
 
+        {/* Roles */}
         <ul
           ref={rolesRef}
           className="mt-8 flex flex-wrap gap-3"
@@ -75,6 +79,7 @@ export function HomePage() {
           ))}
         </ul>
 
+        {/* CTAs */}
         <div ref={ctaRef} className="mt-10 flex flex-wrap gap-4">
           <Link
             to="/portfolio"
@@ -90,6 +95,7 @@ export function HomePage() {
             Get in touch
           </Link>
         </div>
+
       </section>
     </div>
   );

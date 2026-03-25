@@ -5,7 +5,9 @@ export interface Project {
   category: string;
   year: string;
   description: string;
+  brandColor?: string;
   image?: string;
+  processImages?: string[];
   caseStudyHeroImage?: string;
   caseStudyImages?: string[];
   tags: string[];
@@ -27,7 +29,9 @@ export const projects: Project[] = [
     id: 1,
     slug: 'panday-project',
     title: 'Panday Project',
+    brandColor: '#1D2E56',
     image: '/panday-logo.png',
+    processImages: ['/panday-detail-04.png', '/panday-detail-05.png', '/panday-detail-07.png'],
     caseStudyHeroImage: '/panday-case-hero.png',
     caseStudyImages: [
       '/panday-detail-01.png',
@@ -78,7 +82,9 @@ export const projects: Project[] = [
     id: 2,
     slug: 'issey-miyake-poster',
     title: 'Issey Miyake Design Museum Poster',
+    brandColor: '#3F3F45',
     image: '/issey-miyake-poster.png',
+    processImages: ['/museum-detail-01.png', '/museum-detail-03.png', '/museum-detail-05.png'],
     caseStudyHeroImage: '/museum-case-hero.png',
     caseStudyImages: [
       '/museum-detail-01.png',
@@ -122,7 +128,9 @@ export const projects: Project[] = [
     id: 3,
     slug: 'bandit-breakout',
     title: 'Bandit Breakout Game',
+    brandColor: '#091437',
     image: '/bandit-logo.svg',
+    processImages: ['/bandit-detail-02.png', '/bandit-detail-04.png', '/bandit-detail-06.png'],
     caseStudyHeroImage: '/bandit-case-hero.png',
     caseStudyImages: [
       '/bandit-detail-01.mp4',
@@ -132,7 +140,7 @@ export const projects: Project[] = [
       '/bandit-detail-05.png',
       '/bandit-detail-06.png',
       '',
-      '',
+      '/bandit-detail-09.mov',
     ],
     category: 'Interactive Game Design',
     year: '2024',
@@ -169,7 +177,9 @@ export const projects: Project[] = [
     id: 4,
     slug: 'aidile-project',
     title: 'Aidile Project',
+    brandColor: '#1D4462',
     image: '/aidile-logo.png',
+    processImages: ['/aidile-detail-01.png', '/aidile-detail-03.png', '/aidile-detail-05.png'],
     caseStudyHeroImage: '/aidile-case-hero.png',
     caseStudyImages: [
       '/aidile-detail-01.png',

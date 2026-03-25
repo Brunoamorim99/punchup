@@ -91,6 +91,7 @@ export function ProjectDetailPage() {
       </Link>
 
       <div className="mx-auto max-w-5xl pt-4">
+        {/* hero visual */}
         <div className="mb-10 overflow-hidden rounded-3xl bg-white">
           {project.caseStudyHeroImage ? (
             <img
@@ -257,3 +258,4 @@ export function ProjectDetailPage() {
     </div>
   );
 }
+
