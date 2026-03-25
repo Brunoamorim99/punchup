@@ -7,7 +7,6 @@ import { HomePage } from './pages/HomePage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
 
 function App() {
   const [isReady, setIsReady] = useState(false);
@@ -24,8 +23,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/portfolio/:slug" element={<ProjectDetailPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/about" element={<AboutPage startSection="about" />} />
+            <Route path="/contact" element={<AboutPage startSection="contact" />} />
           </Routes>
         </main>
       </div>
