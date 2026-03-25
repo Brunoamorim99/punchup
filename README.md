@@ -7,7 +7,7 @@ Personal portfolio built with React, TypeScript, Vite, and Tailwind CSS.
 1. Install dependencies:
    - `npm install`
 2. Sync media assets from the original portfolio:
-   - `npm run sync:assets`
+   - `npm run sync:assets -- "/absolute/path/to/old-project/public"`
 3. Start development server:
    - `npm run dev`
 4. Build for production:

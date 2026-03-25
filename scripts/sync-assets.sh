@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SRC="/Users/brunoamorim/Bcit 2026/Final project /cursor-portfolio/public"
-DST="/Users/brunoamorim/Bcit 2026/punchup/public"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SRC="${1:-${ASSET_SOURCE_DIR:-}}"
+DST="${2:-"$ROOT_DIR/public"}"
+
+if [ -z "${SRC}" ]; then
+  echo "Missing source directory."
+  echo "Usage: npm run sync:assets -- \"/path/to/old-project/public\""
+  echo "or set ASSET_SOURCE_DIR before running."
+  exit 1
+fi
 
 mkdir -p "$DST"
 
