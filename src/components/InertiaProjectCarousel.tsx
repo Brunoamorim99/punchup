@@ -105,6 +105,10 @@ export function InertiaProjectCarousel({
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
             Project Showcase
           </h1>
+          <p className="mt-5 text-lg leading-relaxed text-white/78">
+            A selection of projects showing how I approach complex problems with user-centered design,
+            product thinking, and clear visual systems.
+          </p>
         </header>
       </div>
 
@@ -147,10 +151,23 @@ export function InertiaProjectCarousel({
 
             <div data-speed="0.5" className="space-y-5 text-white">
               <p className="text-sm uppercase tracking-[0.2em] text-white/60">{project.id}</p>
+              <p className="text-sm font-medium uppercase tracking-[0.16em] text-white/70">
+                {project.category} • {project.year}
+              </p>
               <h2 className="text-3xl font-semibold md:text-5xl">{project.title}</h2>
               <p className="max-w-xl text-base leading-relaxed text-white/78">
                 {project.description}
               </p>
+              <div className="flex max-w-xl flex-wrap gap-2">
+                {project.previewTags.map((tag) => (
+                  <span
+                    key={`${project.id}-${tag}`}
+                    className="rounded-full border border-white/35 bg-white/10 px-3 py-1 text-xs font-medium text-white/95"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
               <Link
                 to={project.link}
                 className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-medium text-white transition hover:bg-white hover:text-black"
