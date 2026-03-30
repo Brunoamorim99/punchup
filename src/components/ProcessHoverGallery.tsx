@@ -36,7 +36,7 @@ export function ProcessHoverGallery({
 
     const interval = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % frames.length);
-    }, 230);
+    }, 1680);
 
     return () => clearInterval(interval);
   }, [frames.length, isHovering]);
@@ -63,10 +63,10 @@ export function ProcessHoverGallery({
           src={frames[activeIndex]}
           alt={title}
           className="h-full w-full object-cover"
-          initial={{ opacity: 0.2, scale: 1.02 }}
+          initial={{ opacity: 0, scale: 1.015 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.16, ease: 'easeOut' }}
+          exit={{ opacity: 0, scale: 0.99 }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
         />
       </AnimatePresence>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-transparent" />

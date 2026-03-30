@@ -105,10 +105,6 @@ export function InertiaProjectCarousel({
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
             Project Showcase
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-white/78">
-            A motion-first project gallery with process reveals, high-inertia
-            scroll, and brand-color transitions.
-          </p>
         </header>
       </div>
 
