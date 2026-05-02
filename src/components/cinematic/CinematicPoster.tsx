@@ -158,10 +158,16 @@ function CinematicPosterComponent({
         )}
       </AnimatePresence>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-transparent" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-transparent"
+      />
 
       {showProgress && shouldAnimate && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-white/10">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-white/10"
+        >
           <motion.div
             key={`${activeIndex}-progress`}
             className="h-full bg-white"

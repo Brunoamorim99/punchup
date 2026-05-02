@@ -69,29 +69,34 @@ export function ProjectDetailPage() {
           </p>
         </header>
 
-        <section className="mb-12 grid gap-8 border-b border-gray-200 pb-10 md:grid-cols-3">
-          <div>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-              Role
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
-                <PillTag key={tag}>{tag}</PillTag>
-              ))}
+        <section
+          aria-label="Project details"
+          className="mb-12 border-b border-gray-200 pb-10"
+        >
+          <dl className="grid gap-8 md:grid-cols-3">
+            <div>
+              <dt className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                Role
+              </dt>
+              <dd className="flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <PillTag key={tag}>{tag}</PillTag>
+                ))}
+              </dd>
             </div>
-          </div>
-          <div>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-              Timeline
-            </h2>
-            <p className="text-sm text-gray-800">{project.year}</p>
-          </div>
-          <div>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-              Category
-            </h2>
-            <p className="text-sm text-gray-800">{project.category}</p>
-          </div>
+            <div>
+              <dt className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                Timeline
+              </dt>
+              <dd className="text-sm text-gray-800">{project.year}</dd>
+            </div>
+            <div>
+              <dt className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                Category
+              </dt>
+              <dd className="text-sm text-gray-800">{project.category}</dd>
+            </div>
+          </dl>
         </section>
 
         {project.liveUrl && (

@@ -57,9 +57,11 @@ export const ProjectShowcaseCard = forwardRef<
           {project.id}
         </p>
         <p className="text-sm font-medium uppercase tracking-[0.16em] text-white/70">
-          {project.category} • {project.year}
+          {project.category} • <time dateTime={project.year}>{project.year}</time>
         </p>
-        <h2 className="text-3xl font-semibold md:text-5xl">{project.title}</h2>
+        <h2 className="text-2xl font-semibold sm:text-3xl md:text-5xl">
+          {project.title}
+        </h2>
         <p className="max-w-xl text-base leading-relaxed text-white/78">
           {project.description}
         </p>
