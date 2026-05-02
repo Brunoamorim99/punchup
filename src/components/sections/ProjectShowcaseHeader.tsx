@@ -1,4 +1,6 @@
-export function ProjectShowcaseHeader() {
+import { memo } from 'react';
+
+function ProjectShowcaseHeaderComponent() {
   return (
     <header className="mb-14 max-w-3xl">
       <p className="text-xs uppercase tracking-[0.2em] text-white/60">Work</p>
@@ -12,3 +14,5 @@ export function ProjectShowcaseHeader() {
     </header>
   );
 }
+
+export const ProjectShowcaseHeader = memo(ProjectShowcaseHeaderComponent);

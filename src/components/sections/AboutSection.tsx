@@ -67,6 +67,7 @@ export function AboutSection() {
               alt="Portrait of Bruno Amorim dos Santos"
               loading="eager"
               decoding="async"
+              fetchPriority="high"
               className="h-full w-full object-cover"
               style={{ objectPosition: 'center 28%', transform: 'scale(1.25)' }}
             />

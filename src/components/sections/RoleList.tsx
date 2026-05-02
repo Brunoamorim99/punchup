@@ -1,8 +1,10 @@
+import { memo } from 'react';
+
 type RoleListProps = {
   roles: readonly string[];
 };
 
-export function RoleList({ roles }: RoleListProps) {
+function RoleListComponent({ roles }: RoleListProps) {
   return (
     <ul
       className="mt-8 flex flex-wrap gap-3"
@@ -19,3 +21,5 @@ export function RoleList({ roles }: RoleListProps) {
     </ul>
   );
 }
+
+export const RoleList = memo(RoleListComponent);
