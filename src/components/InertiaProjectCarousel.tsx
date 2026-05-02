@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ProcessHoverGallery } from './ProcessHoverGallery';
+import { ProjectShowcaseHeader } from './sections/ProjectShowcaseHeader';
+import { ProjectScrollIndicator } from './sections/ProjectScrollIndicator';
+import { ProjectShowcaseCard } from './sections/ProjectShowcaseCard';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 import type { CarouselProject } from '../data/carouselProjects';
 
 type InertiaProjectCarouselProps = {
@@ -19,12 +20,12 @@ export function InertiaProjectCarousel({
   const sectionRefs = useRef<Array<HTMLElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTouch, setIsTouch] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setIsTouch(coarsePointer || reducedMotion);
-  }, []);
+    setIsTouch(coarsePointer || prefersReducedMotion);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     if (isTouch || !containerRef.current || !projects.length) return;
@@ -74,12 +75,8 @@ export function InertiaProjectCarousel({
           trigger: section,
           start: 'top 55%',
           end: 'bottom 55%',
-          onEnter: () => {
-            setActiveIndex(index);
-          },
-          onEnterBack: () => {
-            setActiveIndex(index);
-          },
+          onEnter: () => setActiveIndex(index),
+          onEnterBack: () => setActiveIndex(index),
         });
       });
     }, containerRef);
@@ -88,97 +85,43 @@ export function InertiaProjectCarousel({
   }, [isTouch, projects.length]);
 
   const scrollToProject = (index: number) => {
-    const target = sectionRefs.current[index];
-    if (!target) return;
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    sectionRefs.current[index]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
   return (
-    <div
+    <section
       id={sectionId}
       ref={containerRef}
       className="work-carousel relative"
+      aria-label="Project showcase"
     >
       <div className="mx-auto max-w-6xl px-6 pb-20 pt-24">
-        <header className="mb-14 max-w-3xl">
-          <p className="text-xs uppercase tracking-[0.2em] text-white/60">Work</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            Project Showcase
-          </h1>
-          <p className="mt-5 text-lg leading-relaxed text-white/78">
-            A selection of projects showing how I approach complex problems with user-centered design,
-            product thinking, and clear visual systems.
-          </p>
-        </header>
+        <ProjectShowcaseHeader />
       </div>
 
       {!isTouch && (
-        <div className="fixed right-6 top-1/2 z-40 -translate-y-1/2 space-y-3">
-          {projects.map((project, index) => (
-            <button
-              key={`${project.id}-${project.title}`}
-              type="button"
-              onClick={() => scrollToProject(index)}
-              className={`block text-sm tracking-[0.2em] transition ${
-                activeIndex === index ? 'text-white' : 'text-white/45 hover:text-white/80'
-              }`}
-              aria-label={`Jump to ${project.title}`}
-            >
-              {project.id}
-            </button>
-          ))}
-        </div>
+        <ProjectScrollIndicator
+          projects={projects}
+          activeIndex={activeIndex}
+          onJumpTo={scrollToProject}
+        />
       )}
 
-      <section className="space-y-0">
+      <div className="space-y-0">
         {projects.map((project, index) => (
-          <article
+          <ProjectShowcaseCard
             key={`${project.id}-${project.title}`}
+            project={project}
+            isTouch={isTouch}
             ref={(node) => {
               sectionRefs.current[index] = node;
             }}
-            className={`mx-auto grid max-w-6xl gap-10 px-6 pb-16 ${
-              isTouch ? 'pt-6 md:grid-cols-2 md:items-center' : 'min-h-screen content-center md:grid-cols-2 md:items-center'
-            }`}
-          >
-            <div data-speed="1" className="aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/10">
-              <ProcessHoverGallery
-                title={project.title}
-                heroImage={project.heroImage}
-                processImages={project.processImages}
-              />
-            </div>
-
-            <div data-speed="0.5" className="space-y-5 text-white">
-              <p className="text-sm uppercase tracking-[0.2em] text-white/60">{project.id}</p>
-              <p className="text-sm font-medium uppercase tracking-[0.16em] text-white/70">
-                {project.category} • {project.year}
-              </p>
-              <h2 className="text-3xl font-semibold md:text-5xl">{project.title}</h2>
-              <p className="max-w-xl text-base leading-relaxed text-white/78">
-                {project.description}
-              </p>
-              <div className="flex max-w-xl flex-wrap gap-2">
-                {project.previewTags.map((tag) => (
-                  <span
-                    key={`${project.id}-${tag}`}
-                    className="rounded-full border border-white/35 bg-white/10 px-3 py-1 text-xs font-medium text-white/95"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <Link
-                to={project.link}
-                className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-medium text-white transition hover:bg-white hover:text-black"
-              >
-                View case study
-                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </article>
+          />
         ))}
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }

@@ -1,35 +1,22 @@
-import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Navigation } from './components/Navigation';
-import { ThemeToggle } from './components/ThemeToggle';
-import { EnergyPreloader } from './components/EnergyPreloader';
+import { Layout } from './components/layout/Layout';
 import { HomePage } from './pages/HomePage';
 import { PortfolioPage } from './pages/PortfolioPage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
 import { AboutPage } from './pages/AboutPage';
 
 function App() {
-  const [isReady, setIsReady] = useState(false);
-
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      {!isReady && <EnergyPreloader onComplete={() => setIsReady(true)} />}
-
-      <div className={isReady ? 'opacity-100 transition-opacity duration-500' : 'opacity-0'}>
-        <ThemeToggle />
-        <Navigation />
-        <main className="pt-24">
-          <Routes>
-            <Route path="/" element={<HomePage startSection="home" />} />
-            <Route path="/portfolio" element={<HomePage startSection="portfolio" />} />
-            <Route path="/portfolio/:slug" element={<ProjectDetailPage />} />
-            <Route path="/about" element={<AboutPage startSection="about" />} />
-            <Route path="/contact" element={<AboutPage startSection="about" />} />
-            <Route path="/work" element={<PortfolioPage />} />
-          </Routes>
-        </main>
-      </div>
-    </div>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<HomePage startSection="home" />} />
+        <Route path="/portfolio" element={<HomePage startSection="portfolio" />} />
+        <Route path="/portfolio/:slug" element={<ProjectDetailPage />} />
+        <Route path="/about" element={<AboutPage startSection="about" />} />
+        <Route path="/contact" element={<AboutPage startSection="contact" />} />
+        <Route path="/work" element={<PortfolioPage />} />
+      </Routes>
+    </Layout>
   );
 }
 

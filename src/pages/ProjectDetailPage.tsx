@@ -1,62 +1,8 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { projects } from '../data/projects';
-
-function ImageFrame({ label, src }: { label: string; src?: string }) {
-  if (src) {
-    const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(src);
-
-    return (
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-        {isVideo ? (
-          <video
-            src={src}
-            controls
-            preload="metadata"
-            className="max-h-[620px] w-full object-contain bg-white"
-          />
-        ) : (
-          <img src={src} alt={label} className="max-h-[620px] w-full object-contain bg-white" />
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white px-4 text-center text-xs font-medium uppercase tracking-[0.12em] text-gray-500">
-      {label}
-    </div>
-  );
-}
-
-function ImageRow({
-  sources,
-  labelPrefix,
-}: {
-  sources: string[];
-  labelPrefix: string;
-}) {
-  if (!sources.length) return null;
-
-  const gridClass =
-    sources.length > 1
-      ? sources.length === 2
-        ? 'md:grid-cols-2'
-        : 'md:grid-cols-3'
-      : '';
-
-  return (
-    <div className={`mt-5 grid gap-4 ${gridClass}`}>
-      {sources.map((src, index) => (
-        <ImageFrame
-          key={`${labelPrefix}-${index + 1}-${src}`}
-          label={`${labelPrefix} ${index + 1}`}
-          src={src}
-        />
-      ))}
-    </div>
-  );
-}
+import { MediaRow } from '../components/ui/MediaRow';
+import { PillTag } from '../components/ui/PillTag';
 
 export function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -81,33 +27,35 @@ export function ProjectDetailPage() {
   const impactImages = mediaByIndex([8, 9]);
 
   return (
-    <div className="bg-white px-6 pb-20">
+    <article className="bg-white px-6 pb-20">
       <Link
         to="/portfolio"
         aria-label="Back to portfolio"
-        className="fixed left-4 top-28 z-[59] inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 bg-white/80 text-gray-900 shadow-sm backdrop-blur transition hover:scale-105 hover:border-violet-700 hover:text-violet-700 dark:border-gray-700 dark:bg-black/70 dark:text-gray-100"
+        className="fixed left-4 top-28 z-[59] inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 bg-white/80 text-gray-900 shadow-sm backdrop-blur transition hover:scale-105 hover:border-violet-700 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-black/70 dark:text-gray-100"
       >
         <ArrowLeft className="h-4 w-4" />
       </Link>
 
       <div className="mx-auto max-w-5xl pt-4">
-        {/* hero visual */}
-        <div className="mb-10 overflow-hidden rounded-3xl bg-white">
+        <figure className="mb-10 overflow-hidden rounded-3xl bg-white">
           {project.caseStudyHeroImage ? (
             <img
               src={project.caseStudyHeroImage}
               alt={`${project.title} hero`}
-              className="h-full max-h-[520px] w-full object-contain bg-white"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              className="h-full max-h-[520px] w-full bg-white object-contain"
             />
           ) : (
-            <div className="flex aspect-video items-center justify-center px-6 text-sm text-gray-400">
+            <figcaption className="flex aspect-video items-center justify-center px-6 text-sm text-gray-400">
               Replace this area with your main Figma export for{' '}
               <span className="ml-1 font-medium text-gray-600">
                 {project.title}
               </span>
-            </div>
+            </figcaption>
           )}
-        </div>
+        </figure>
 
         <header className="mb-10">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-gray-500">
@@ -128,12 +76,7 @@ export function ProjectDetailPage() {
             </h2>
             <div className="flex flex-wrap gap-2">
               {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800"
-                >
-                  {tag}
-                </span>
+                <PillTag key={tag}>{tag}</PillTag>
               ))}
             </div>
           </div>
@@ -165,67 +108,67 @@ export function ProjectDetailPage() {
           </div>
         )}
 
-        <section className="mb-12 space-y-10">
-          <div>
+        <div className="mb-12 space-y-10">
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               Overview
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700">
               {project.description}
             </p>
-            <ImageRow sources={overviewImages} labelPrefix="Overview visual" />
-          </div>
+            <MediaRow sources={overviewImages} labelPrefix="Overview visual" />
+          </section>
 
-          <div>
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               The problem
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700">
               {project.problem}
             </p>
-            <ImageRow sources={problemImages} labelPrefix="Problem visual" />
-          </div>
+            <MediaRow sources={problemImages} labelPrefix="Problem visual" />
+          </section>
 
-          <div>
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               Research & discovery
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700">
               {project.research}
             </p>
-            <ImageRow sources={researchImages} labelPrefix="Research visual" />
-          </div>
+            <MediaRow sources={researchImages} labelPrefix="Research visual" />
+          </section>
 
-          <div>
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               Challenges
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700">
               {project.challenges}
             </p>
-          </div>
+          </section>
 
-          <div>
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               Design process
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700">
               {project.designProcess}
             </p>
-            <ImageRow sources={processImages} labelPrefix="Process visual" />
-          </div>
+            <MediaRow sources={processImages} labelPrefix="Process visual" />
+          </section>
 
-          <div>
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               The solution
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700">
               {project.solution}
             </p>
-            <ImageRow sources={solutionImages} labelPrefix="Solution visual" />
-          </div>
+            <MediaRow sources={solutionImages} labelPrefix="Solution visual" />
+          </section>
 
-          <div>
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               Key features
             </h2>
@@ -241,21 +184,19 @@ export function ProjectDetailPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div>
+          <section>
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl">
               Impact & results
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700">
               {project.impact}
             </p>
-            <ImageRow sources={impactImages} labelPrefix="Impact visual" />
-          </div>
-        </section>
-
+            <MediaRow sources={impactImages} labelPrefix="Impact visual" />
+          </section>
+        </div>
       </div>
-    </div>
+    </article>
   );
 }
-
