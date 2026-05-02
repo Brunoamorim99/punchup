@@ -17,7 +17,7 @@ export type CinematicPosterProps = {
    * Takes precedence over playbackSpeed when provided.
    */
   frameDurationMs?: number;
-  /** Crossfade/zoom transition length per slide, in seconds. */
+  /** Crossfade/zoom transition length per slide, in ms. */
   transitionDurationMs?: number;
   /** Whether the slideshow advances while the poster is hovered/focused. */
   autoplayOnHover?: boolean;
@@ -35,10 +35,28 @@ export type CinematicPosterProps = {
 
 const DEFAULT_FRAME_DURATION_MS = 1680;
 const DEFAULT_TRANSITION_DURATION_MS = 400;
-const VIDEO_EXTENSION = /\.(mp4|webm|ogg|mov)$/i;
+const VIDEO_EXTENSION_PATTERN = /\.(mp4|webm|ogg|mov)$/i;
+
+const STATIC_INITIAL_VARIANT = { opacity: 0, scale: 1.015 } as const;
+const STATIC_ANIMATE_VARIANT = { opacity: 1, scale: 1 } as const;
+
+const KEN_BURNS_INITIAL_VARIANT = {
+  opacity: 0,
+  scale: 1.06,
+  x: -6,
+  y: 6,
+} as const;
+const KEN_BURNS_ANIMATE_VARIANT = {
+  opacity: 1,
+  scale: 1,
+  x: 0,
+  y: 0,
+} as const;
+
+const EXIT_VARIANT = { opacity: 0, scale: 0.99 } as const;
 
 function isVideoSource(src: string) {
-  return VIDEO_EXTENSION.test(src);
+  return VIDEO_EXTENSION_PATTERN.test(src);
 }
 
 function CinematicPosterComponent({
@@ -63,13 +81,13 @@ function CinematicPosterComponent({
     [images],
   );
 
-  const resolvedFrameDuration = useMemo(() => {
+  const resolvedFrameDurationMs = useMemo(() => {
     if (frameDurationMs && frameDurationMs > 0) return frameDurationMs;
-    const multiplier = playbackSpeed > 0 ? playbackSpeed : 1;
-    return DEFAULT_FRAME_DURATION_MS * multiplier;
+    const safeMultiplier = playbackSpeed > 0 ? playbackSpeed : 1;
+    return DEFAULT_FRAME_DURATION_MS * safeMultiplier;
   }, [frameDurationMs, playbackSpeed]);
 
-  const shouldAnimate =
+  const shouldAutoplay =
     autoplayOnHover && isHovering && !prefersReducedMotion && frames.length > 1;
 
   const handleFrameChange = useCallback(
@@ -81,8 +99,8 @@ function CinematicPosterComponent({
 
   const activeIndex = useAutoplay({
     frameCount: frames.length,
-    intervalMs: resolvedFrameDuration,
-    isActive: shouldAnimate,
+    intervalMs: resolvedFrameDurationMs,
+    isActive: shouldAutoplay,
     onChange: handleFrameChange,
   });
 
@@ -98,24 +116,27 @@ function CinematicPosterComponent({
 
   if (!frames.length) {
     return (
-      <div className="flex h-full items-center justify-center bg-white px-6 text-center text-sm text-gray-400">
+      <div
+        role="img"
+        aria-label={`${title} — visual coming soon`}
+        className="flex h-full items-center justify-center bg-white px-6 text-center text-sm text-gray-400"
+      >
         Project visual coming soon
       </div>
     );
   }
 
   const activeFrame = frames[activeIndex];
+  const activeFrameIsVideo = isVideoSource(activeFrame);
   const transitionSeconds = transitionDurationMs / 1000;
-  const activeIsVideo = isVideoSource(activeFrame);
-  const mediaClass = `h-full w-full ${objectFit === 'contain' ? 'object-contain' : 'object-cover'}`;
+  const mediaClassName = `h-full w-full ${objectFit === 'contain' ? 'object-contain' : 'object-cover'}`;
 
-  const kenBurnsAnimate = kenBurns
-    ? { opacity: 1, scale: 1, x: 0, y: 0 }
-    : { opacity: 1, scale: 1 };
-
-  const kenBurnsInitial = kenBurns
-    ? { opacity: 0, scale: 1.06, x: -6, y: 6 }
-    : { opacity: 0, scale: 1.015 };
+  const initialVariant = kenBurns
+    ? KEN_BURNS_INITIAL_VARIANT
+    : STATIC_INITIAL_VARIANT;
+  const animateVariant = kenBurns
+    ? KEN_BURNS_ANIMATE_VARIANT
+    : STATIC_ANIMATE_VARIANT;
 
   return (
     <figure
@@ -127,7 +148,7 @@ function CinematicPosterComponent({
       aria-label={title}
     >
       <AnimatePresence mode="wait">
-        {activeIsVideo ? (
+        {activeFrameIsVideo ? (
           <motion.video
             key={`${activeFrame}-${activeIndex}`}
             src={activeFrame}
@@ -136,7 +157,7 @@ function CinematicPosterComponent({
             playsInline
             autoPlay
             preload="metadata"
-            className={mediaClass}
+            className={mediaClassName}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -149,10 +170,10 @@ function CinematicPosterComponent({
             alt={description ? `${title} — ${description}` : title}
             loading={priority && activeIndex === 0 ? 'eager' : 'lazy'}
             decoding="async"
-            className={mediaClass}
-            initial={kenBurnsInitial}
-            animate={kenBurnsAnimate}
-            exit={{ opacity: 0, scale: 0.99 }}
+            className={mediaClassName}
+            initial={initialVariant}
+            animate={animateVariant}
+            exit={EXIT_VARIANT}
             transition={{ duration: transitionSeconds, ease: 'easeInOut' }}
           />
         )}
@@ -163,7 +184,7 @@ function CinematicPosterComponent({
         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-transparent"
       />
 
-      {showProgress && shouldAnimate && (
+      {showProgress && shouldAutoplay && (
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-white/10"
@@ -174,7 +195,7 @@ function CinematicPosterComponent({
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
             transition={{
-              duration: resolvedFrameDuration / 1000,
+              duration: resolvedFrameDurationMs / 1000,
               ease: 'linear',
             }}
           />

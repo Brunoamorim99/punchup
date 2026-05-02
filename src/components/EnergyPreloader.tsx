@@ -5,70 +5,105 @@ type EnergyPreloaderProps = {
   onComplete: () => void;
 };
 
+/** Progress targets for each document readyState so the bar feels responsive. */
+const READY_STATE_TARGETS = {
+  initial: 20,
+  loading: 35,
+  interactive: 75,
+  complete: 100,
+} as const;
+
+/** How often the progress value is stepped toward its target, in ms. */
+const PROGRESS_TICK_INTERVAL_MS = 28;
+
+/** How aggressively the bar closes the gap to its target each tick. */
+const PROGRESS_EASING_RATIO = 0.12;
+
+/** Minimum forward movement per tick so the bar never visually stalls. */
+const MIN_STEP_PERCENT = 0.8;
+
+/** Threshold at which we snap to 100 rather than crawl the last decimals. */
+const SNAP_TO_COMPLETE_AT = 99.5;
+
+/** Delay after reaching 100 % before the preloader fades out. */
+const FADE_OUT_DELAY_MS = 420;
+
+/** How long the preloader itself fades out. */
+const FADE_OUT_SECONDS = 0.35;
+
+/** Clip-reveal animation used when the preloader wipes off-screen. */
+const WIPE_SECONDS = 0.7;
+const WIPE_EASING: [number, number, number, number] = [0.2, 0.9, 0.2, 1];
+
 export function EnergyPreloader({ onComplete }: EnergyPreloaderProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
-  const targetProgressRef = useRef(20);
-  const doneRef = useRef(false);
+  const targetProgressRef = useRef<number>(READY_STATE_TARGETS.initial);
+  const hasFinishedRef = useRef(false);
 
   const progressLabel = useMemo(() => `${Math.round(progress)}%`, [progress]);
 
   useEffect(() => {
-    const updateReadyTarget = () => {
-      if (document.readyState === 'loading') targetProgressRef.current = 35;
-      if (document.readyState === 'interactive') targetProgressRef.current = 75;
-      if (document.readyState === 'complete') targetProgressRef.current = 100;
+    const syncTargetToReadyState = () => {
+      if (document.readyState === 'loading') {
+        targetProgressRef.current = READY_STATE_TARGETS.loading;
+      } else if (document.readyState === 'interactive') {
+        targetProgressRef.current = READY_STATE_TARGETS.interactive;
+      } else if (document.readyState === 'complete') {
+        targetProgressRef.current = READY_STATE_TARGETS.complete;
+      }
     };
 
-    const onReadyStateChange = () => updateReadyTarget();
-    const onWindowLoad = () => {
-      targetProgressRef.current = 100;
+    const handleWindowLoad = () => {
+      targetProgressRef.current = READY_STATE_TARGETS.complete;
     };
 
-    updateReadyTarget();
-    document.addEventListener('readystatechange', onReadyStateChange);
-    window.addEventListener('load', onWindowLoad);
+    syncTargetToReadyState();
+    document.addEventListener('readystatechange', syncTargetToReadyState);
+    window.addEventListener('load', handleWindowLoad);
 
-    const interval = window.setInterval(() => {
-      setProgress((current) => {
+    const tickInterval = window.setInterval(() => {
+      setProgress((currentProgress) => {
         const target = targetProgressRef.current;
-        const easedStep = Math.max(0.8, (target - current) * 0.12);
-        const next = Math.min(target, current + easedStep);
-        return next >= 99.5 ? 100 : next;
+        const easedStep = Math.max(
+          MIN_STEP_PERCENT,
+          (target - currentProgress) * PROGRESS_EASING_RATIO,
+        );
+        const nextProgress = Math.min(target, currentProgress + easedStep);
+        return nextProgress >= SNAP_TO_COMPLETE_AT ? 100 : nextProgress;
       });
-    }, 28);
+    }, PROGRESS_TICK_INTERVAL_MS);
 
     return () => {
-      clearInterval(interval);
-      document.removeEventListener('readystatechange', onReadyStateChange);
-      window.removeEventListener('load', onWindowLoad);
+      clearInterval(tickInterval);
+      document.removeEventListener('readystatechange', syncTargetToReadyState);
+      window.removeEventListener('load', handleWindowLoad);
     };
   }, []);
 
   useEffect(() => {
-    if (progress < 100 || doneRef.current) return;
-    doneRef.current = true;
-    const timeout = window.setTimeout(() => setIsVisible(false), 420);
-    return () => clearTimeout(timeout);
+    if (progress < 100 || hasFinishedRef.current) return;
+    hasFinishedRef.current = true;
+    const hideTimeout = window.setTimeout(
+      () => setIsVisible(false),
+      FADE_OUT_DELAY_MS,
+    );
+    return () => clearTimeout(hideTimeout);
   }, [progress]);
 
   return (
-    <AnimatePresence
-      onExitComplete={() => {
-        onComplete();
-      }}
-    >
+    <AnimatePresence onExitComplete={onComplete}>
       {isVisible ? (
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
+          transition={{ duration: FADE_OUT_SECONDS, ease: 'easeOut' }}
           className="fixed inset-0 z-[120] flex items-center justify-center bg-black text-white"
         >
           <motion.div
             initial={{ clipPath: 'inset(0 0 0 0)' }}
             exit={{ clipPath: 'inset(0 0 0 100%)' }}
-            transition={{ duration: 0.7, ease: [0.2, 0.9, 0.2, 1] }}
+            transition={{ duration: WIPE_SECONDS, ease: WIPE_EASING }}
             className="w-[min(620px,86vw)] space-y-5"
           >
             <div className="h-[2px] w-full overflow-hidden rounded-full bg-white/20">

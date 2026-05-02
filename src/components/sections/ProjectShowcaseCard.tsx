@@ -14,6 +14,24 @@ type ProjectShowcaseCardProps = {
   playbackSpeed?: number;
 };
 
+const POSTER_TRANSITION_MS = 420;
+
+function buildLayoutClass({
+  isTouch,
+  isFirst,
+}: {
+  isTouch: boolean;
+  isFirst: boolean;
+}) {
+  if (isTouch) {
+    return 'pt-6 md:grid-cols-2 md:items-center';
+  }
+  if (isFirst) {
+    return 'pt-2 md:grid-cols-2 md:items-start';
+  }
+  return 'min-h-screen content-center md:grid-cols-2 md:items-center';
+}
+
 export const ProjectShowcaseCard = forwardRef<
   HTMLElement,
   ProjectShowcaseCardProps
@@ -27,12 +45,7 @@ export const ProjectShowcaseCard = forwardRef<
   );
 
   const isFirst = index === 0;
-
-  const layoutClass = isTouch
-    ? 'pt-6 md:grid-cols-2 md:items-center'
-    : isFirst
-      ? 'pt-2 md:grid-cols-2 md:items-start'
-      : 'min-h-screen content-center md:grid-cols-2 md:items-center';
+  const layoutClass = buildLayoutClass({ isTouch, isFirst });
 
   return (
     <article
@@ -48,8 +61,8 @@ export const ProjectShowcaseCard = forwardRef<
           description={project.description}
           images={posterImages}
           playbackSpeed={playbackSpeed}
-          transitionDurationMs={420}
-          priority={index === 0}
+          transitionDurationMs={POSTER_TRANSITION_MS}
+          priority={isFirst}
           showProgress
           kenBurns
         />

@@ -1,8 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDown } from 'lucide-react';
 import { RoleList } from './RoleList';
 import { heroRoles } from '../../data/siteContent';
+import { useStaggeredReveal } from '../../hooks/useStaggeredReveal';
+
+const headingFont = '"Pachang", sans-serif';
+const bodyFont = '"Manrope", sans-serif';
 
 export function HeroSection() {
   const nameRef = useRef<HTMLHeadingElement>(null);
@@ -10,27 +14,9 @@ export function HeroSection() {
   const rolesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const elements = [
-      { el: nameRef.current, delay: 0 },
-      { el: subtitleRef.current, delay: 120 },
-      { el: rolesRef.current, delay: 240 },
-      { el: ctaRef.current, delay: 380 },
-    ];
-
-    elements.forEach(({ el, delay }) => {
-      if (!el) return;
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(28px)';
-      el.style.transition = `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`;
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.style.opacity = '1';
-          el.style.transform = 'translateY(0)';
-        });
-      });
-    });
-  }, []);
+  useStaggeredReveal({
+    targets: [nameRef, subtitleRef, rolesRef, ctaRef],
+  });
 
   return (
     <section className="flex min-h-[calc(100vh-4rem)] flex-col justify-center px-6 pb-20">
@@ -38,7 +24,7 @@ export function HeroSection() {
         <header>
           <h1
             ref={nameRef}
-            style={{ fontFamily: '"Pachang", sans-serif' }}
+            style={{ fontFamily: headingFont }}
             className="text-[clamp(3.5rem,12vw,9rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--text)]"
           >
             Hi, I&apos;m
@@ -53,7 +39,7 @@ export function HeroSection() {
           <p
             ref={subtitleRef}
             className="mt-6 max-w-xl text-lg leading-relaxed text-gray-500 dark:text-gray-400"
-            style={{ fontFamily: '"Manrope", sans-serif', fontWeight: 400 }}
+            style={{ fontFamily: bodyFont, fontWeight: 400 }}
           >
             Combining{' '}
             <span className="font-semibold text-[var(--text)]">design</span>,{' '}

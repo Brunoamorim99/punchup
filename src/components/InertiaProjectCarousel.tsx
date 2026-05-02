@@ -12,6 +12,16 @@ type InertiaProjectCarouselProps = {
   sectionId?: string;
 };
 
+/** Parallax strength for each layer inside a card while it passes the viewport. */
+const PARALLAX_CONFIG = {
+  image: { fromPercent: -12, toPercent: 12, scrub: 1.2 },
+  text: { fromPercent: -4, toPercent: 4, scrub: 1 },
+} as const;
+
+/** Where along the viewport a card is considered "active" for the dot indicator. */
+const ACTIVE_TRIGGER_START = 'top 55%';
+const ACTIVE_TRIGGER_END = 'bottom 55%';
+
 export function InertiaProjectCarousel({
   projects,
   sectionId = 'portfolio',
@@ -23,32 +33,34 @@ export function InertiaProjectCarousel({
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    setIsTouch(coarsePointer || prefersReducedMotion);
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    setIsTouch(hasCoarsePointer || prefersReducedMotion);
   }, [prefersReducedMotion]);
 
   useEffect(() => {
     if (isTouch || !containerRef.current || !projects.length) return;
 
     gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
+
+    const context = gsap.context(() => {
       sectionRefs.current.forEach((section, index) => {
         if (!section) return;
+
         const imageLayer = section.querySelector<HTMLElement>('[data-speed="1"]');
         const textLayer = section.querySelector<HTMLElement>('[data-speed="0.5"]');
 
         if (imageLayer) {
           gsap.fromTo(
             imageLayer,
-            { yPercent: -12 },
+            { yPercent: PARALLAX_CONFIG.image.fromPercent },
             {
-              yPercent: 12,
+              yPercent: PARALLAX_CONFIG.image.toPercent,
               ease: 'none',
               scrollTrigger: {
                 trigger: section,
                 start: 'top bottom',
                 end: 'bottom top',
-                scrub: 1.2,
+                scrub: PARALLAX_CONFIG.image.scrub,
               },
             },
           );
@@ -57,15 +69,15 @@ export function InertiaProjectCarousel({
         if (textLayer) {
           gsap.fromTo(
             textLayer,
-            { yPercent: -4 },
+            { yPercent: PARALLAX_CONFIG.text.fromPercent },
             {
-              yPercent: 4,
+              yPercent: PARALLAX_CONFIG.text.toPercent,
               ease: 'none',
               scrollTrigger: {
                 trigger: section,
                 start: 'top bottom',
                 end: 'bottom top',
-                scrub: 1,
+                scrub: PARALLAX_CONFIG.text.scrub,
               },
             },
           );
@@ -73,15 +85,15 @@ export function InertiaProjectCarousel({
 
         ScrollTrigger.create({
           trigger: section,
-          start: 'top 55%',
-          end: 'bottom 55%',
+          start: ACTIVE_TRIGGER_START,
+          end: ACTIVE_TRIGGER_END,
           onEnter: () => setActiveIndex(index),
           onEnterBack: () => setActiveIndex(index),
         });
       });
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, [isTouch, projects.length]);
 
   const scrollToProject = (index: number) => {
