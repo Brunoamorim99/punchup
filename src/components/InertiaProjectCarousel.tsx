@@ -116,6 +116,8 @@ export function InertiaProjectCarousel({
             key={`${project.id}-${project.title}`}
             project={project}
             isTouch={isTouch}
+            index={index}
+            playbackSpeed={1}
             ref={(node) => {
               sectionRefs.current[index] = node;
             }}

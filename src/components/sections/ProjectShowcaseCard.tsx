@@ -1,19 +1,31 @@
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { PillTag } from '../ui/PillTag';
-import { ProcessHoverGallery } from '../ProcessHoverGallery';
+import { CinematicPoster } from '../cinematic/CinematicPoster';
 import type { CarouselProject } from '../../data/carouselProjects';
 
 type ProjectShowcaseCardProps = {
   project: CarouselProject;
   isTouch: boolean;
+  /** Position within the carousel — used to prioritise the first poster. */
+  index?: number;
+  /** Per-card motion speed multiplier for the CinematicPoster. */
+  playbackSpeed?: number;
 };
 
 export const ProjectShowcaseCard = forwardRef<
   HTMLElement,
   ProjectShowcaseCardProps
->(function ProjectShowcaseCard({ project, isTouch }, ref) {
+>(function ProjectShowcaseCard(
+  { project, isTouch, index = 0, playbackSpeed = 1 },
+  ref,
+) {
+  const posterImages = useMemo(
+    () => [project.heroImage, ...project.processImages].filter(Boolean),
+    [project.heroImage, project.processImages],
+  );
+
   return (
     <article
       ref={ref}
@@ -28,10 +40,15 @@ export const ProjectShowcaseCard = forwardRef<
         data-speed="1"
         className="aspect-video overflow-hidden rounded-2xl border border-white/15 bg-black/10"
       >
-        <ProcessHoverGallery
+        <CinematicPoster
           title={project.title}
-          heroImage={project.heroImage}
-          processImages={project.processImages}
+          description={project.description}
+          images={posterImages}
+          playbackSpeed={playbackSpeed}
+          transitionDurationMs={420}
+          priority={index === 0}
+          showProgress
+          kenBurns
         />
       </div>
 
