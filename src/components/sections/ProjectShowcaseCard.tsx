@@ -26,15 +26,18 @@ export const ProjectShowcaseCard = forwardRef<
     [project.heroImage, project.processImages],
   );
 
+  const isFirst = index === 0;
+
+  const layoutClass = isTouch
+    ? 'pt-6 md:grid-cols-2 md:items-center'
+    : isFirst
+      ? 'pt-2 md:grid-cols-2 md:items-start'
+      : 'min-h-screen content-center md:grid-cols-2 md:items-center';
+
   return (
     <article
       ref={ref}
-      className={
-        'mx-auto grid max-w-6xl gap-10 px-6 pb-16 ' +
-        (isTouch
-          ? 'pt-6 md:grid-cols-2 md:items-center'
-          : 'min-h-screen content-center md:grid-cols-2 md:items-center')
-      }
+      className={`mx-auto grid max-w-6xl gap-10 px-6 pb-16 ${layoutClass}`}
     >
       <div
         data-speed="1"

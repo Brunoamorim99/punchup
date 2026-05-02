@@ -98,7 +98,7 @@ export function InertiaProjectCarousel({
       className="work-carousel relative"
       aria-label="Project showcase"
     >
-      <div className="mx-auto max-w-6xl px-6 pb-20 pt-24">
+      <div className="mx-auto max-w-6xl px-6 pb-6 pt-20">
         <ProjectShowcaseHeader />
       </div>
 

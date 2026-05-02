@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import { RoleList } from './RoleList';
 import { heroRoles } from '../../data/siteContent';
 
@@ -76,7 +76,7 @@ export function HeroSection() {
             className="group inline-flex items-center gap-2 rounded-full border border-gray-300 px-7 py-3 text-sm font-medium text-gray-700 transition-all duration-300 hover:border-[var(--primary)] hover:bg-[var(--primary)] hover:text-white dark:border-gray-600 dark:text-gray-300"
           >
             View my work
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
           </a>
           <Link
             to="/contact"
